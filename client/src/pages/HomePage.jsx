@@ -1,6 +1,5 @@
 import Header from '../components/Header';
 import Hero from '../components/Hero';
-import AccreditedBy from '../components/AccreditedBy';
 import AboutUs from '../components/AboutUs';
 import Certificates from '../components/Certificates';
 import EnrollForm from '../components/EnrollForm';
@@ -12,7 +11,6 @@ const HomePage = () => {
       <main className="flex-grow">
         <Header/>
         <Hero />
-        <AccreditedBy />
         <AboutUs />
         <Certificates />
         <EnrollForm />

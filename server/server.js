@@ -1,66 +1,56 @@
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
+import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import Enrollment from './models/Enrollment.js';
+import { validateEmail, validatePhone } from './validator.js';
 
 // Load environment variables
-dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '..', 'mongo.env') });
+dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '..', 'db.env') });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://vanuaacademy.com'
+    : '*',
+  credentials: true
+};
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// MongoDB connection
-let MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-  console.error('MONGO_URI is not defined in mongo.env file');
+// Initialize Firebase Admin
+try {
+  // Try to get service account from environment variable (JSON string)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Firebase Admin initialized with FIREBASE_SERVICE_ACCOUNT');
+  } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    // If GOOGLE_APPLICATION_CREDENTIALS is set, Firebase Admin will use it automatically
+    admin.initializeApp();
+    console.log('Firebase Admin initialized with GOOGLE_APPLICATION_CREDENTIALS');
+  } else {
+    throw new Error('Firebase service account not configured');
+  }
+} catch (error) {
+  console.error('Firebase initialization error:', error.message);
+  console.error('Please set FIREBASE_SERVICE_ACCOUNT (JSON string) or GOOGLE_APPLICATION_CREDENTIALS (file path) in mongo.env');
   process.exit(1);
 }
 
-// Handle special characters in password (encode @ if not already encoded)
-// The password might contain @ which needs to be %40 in the URI
-// Format: mongodb+srv://username:password@host
-// Find the last @ which separates credentials from host
-const lastAtIndex = MONGO_URI.lastIndexOf('@');
-if (lastAtIndex > 0) {
-  const beforeAt = MONGO_URI.substring(0, lastAtIndex);
-  const afterAt = MONGO_URI.substring(lastAtIndex + 1);
-  
-  // Check if there's a colon (indicating username:password format)
-  const colonIndex = beforeAt.indexOf(':');
-  if (colonIndex > 0) {
-    const protocol = beforeAt.substring(0, beforeAt.indexOf('://') + 3);
-    const credentials = beforeAt.substring(beforeAt.indexOf('://') + 3);
-    const [username, ...passwordParts] = credentials.split(':');
-    const password = passwordParts.join(':');
-    
-    // Encode @ in password if present
-    const encodedPassword = password.replace(/@/g, '%40');
-    MONGO_URI = `${protocol}${username}:${encodedPassword}@${afterAt}`;
-  }
-}
-
-mongoose.connect(MONGO_URI)
-  .then(() => {
-    console.log('Connected to MongoDB successfully');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection error:', error);
-    console.error('Please check your MONGO_URI in mongo.env file');
-    process.exit(1);
-  });
+// Get Firestore instance
+const db = admin.firestore();
 
 // Enrollment API endpoint
 app.post('/api/enroll', async (req, res) => {
@@ -92,17 +82,12 @@ app.post('/api/enroll', async (req, res) => {
     let phone = null;
 
     if (contactMethod === 'Email') {
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(contactInfo)) {
+      if (!validateEmail(contactInfo)) {
         return res.status(400).json({ error: 'Invalid email format' });
       }
       email = contactInfo.toLowerCase().trim();
     } else if (['Viber', 'WhatsApp', 'SMS/Text'].includes(contactMethod)) {
-      // Phone number validation - allows international format with +, spaces, dashes, parentheses
-      // Removes common formatting characters for validation
-      const phoneDigits = contactInfo.replace(/[\s\-\(\)\+]/g, '');
-      if (!/^\d{7,15}$/.test(phoneDigits)) {
+      if (!validatePhone(contactInfo)) {
         return res.status(400).json({ error: 'Invalid phone number format' });
       }
       phone = contactInfo.trim();
@@ -112,13 +97,14 @@ app.post('/api/enroll', async (req, res) => {
     // Map certificates from frontend to qualifications in database
     const qualificationsArray = Array.isArray(certificates) ? certificates : [];
 
-    // Create enrollment in MongoDB
+    // Create enrollment data for Firestore
     const enrollmentData = {
-      firstName,
-      lastName,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       preferredContactMethod: contactMethod,
       qualifications: qualificationsArray,
-      paymentMethod
+      paymentMethod: paymentMethod.trim(),
+      submittedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
     // Add email or phone based on contact method
@@ -129,36 +115,23 @@ app.post('/api/enroll', async (req, res) => {
       enrollmentData.phone = phone;
     }
 
-    const enrollment = new Enrollment(enrollmentData);
-
-    const savedEnrollment = await enrollment.save();
+    // Save enrollment to Firestore
+    const enrollmentRef = await db.collection('enrollments').add(enrollmentData);
+    
+    // Get the saved enrollment document
+    const enrollmentDoc = await enrollmentRef.get();
+    const savedEnrollment = {
+      id: enrollmentDoc.id,
+      ...enrollmentDoc.data()
+    };
 
     res.status(201).json({ 
       success: true, 
       message: 'Enrollment submitted successfully',
-      enrollment: {
-        id: savedEnrollment._id,
-        firstName: savedEnrollment.firstName,
-        lastName: savedEnrollment.lastName,
-        preferredContactMethod: savedEnrollment.preferredContactMethod,
-        email: savedEnrollment.email,
-        phone: savedEnrollment.phone,
-        qualifications: savedEnrollment.qualifications,
-        paymentMethod: savedEnrollment.paymentMethod,
-        submittedAt: savedEnrollment.submittedAt
-      }
+      enrollment: savedEnrollment
     });
   } catch (error) {
     console.error('Error processing enrollment:', error);
-    
-    // Handle MongoDB validation errors
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
-        error: 'Validation error',
-        details: Object.values(error.errors).map(e => e.message)
-      });
-    }
-    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -166,6 +139,14 @@ app.post('/api/enroll', async (req, res) => {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.get('/', (req, res) => {
+  res.json({ 
+    service: 'Vanua Academy API',
+    version: '1.0.0',
+    status: 'running'
+  });
 });
 
 app.listen(PORT, () => {
