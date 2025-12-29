@@ -65,38 +65,71 @@ mongoose.connect(MONGO_URI)
 // Enrollment API endpoint
 app.post('/api/enroll', async (req, res) => {
   try {
-    const { firstName, lastName, email, qualifications, paymentMethod } = req.body;
+    const { firstName, lastName, contactMethod, contactInfo, certificates, paymentMethod } = req.body;
 
-    // Validation - qualifications are optional
-    if (!firstName || !lastName || !email || !paymentMethod) {
+    // Validation - certificates are optional
+    if (!firstName || !lastName || !contactMethod || !contactInfo || !paymentMethod) {
       return res.status(400).json({ 
         error: 'Required fields are missing',
         missing: {
           firstName: !firstName,
           lastName: !lastName,
-          email: !email,
+          contactMethod: !contactMethod,
+          contactInfo: !contactInfo,
           paymentMethod: !paymentMethod
         }
       });
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+    // Validate contact method
+    const validContactMethods = ['Email', 'Viber', 'WhatsApp', 'SMS/Text'];
+    if (!validContactMethods.includes(contactMethod)) {
+      return res.status(400).json({ error: 'Invalid contact method' });
     }
 
-    // Ensure qualifications is an array (can be empty)
-    const qualificationsArray = Array.isArray(qualifications) ? qualifications : [];
+    // Map contactInfo to email or phone based on contactMethod
+    let email = null;
+    let phone = null;
+
+    if (contactMethod === 'Email') {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(contactInfo)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+      }
+      email = contactInfo.toLowerCase().trim();
+    } else if (['Viber', 'WhatsApp', 'SMS/Text'].includes(contactMethod)) {
+      // Phone number validation - allows international format with +, spaces, dashes, parentheses
+      // Removes common formatting characters for validation
+      const phoneDigits = contactInfo.replace(/[\s\-\(\)\+]/g, '');
+      if (!/^\d{7,15}$/.test(phoneDigits)) {
+        return res.status(400).json({ error: 'Invalid phone number format' });
+      }
+      phone = contactInfo.trim();
+    }
+
+    // Ensure certificates is an array (can be empty)
+    // Map certificates from frontend to qualifications in database
+    const qualificationsArray = Array.isArray(certificates) ? certificates : [];
 
     // Create enrollment in MongoDB
-    const enrollment = new Enrollment({
+    const enrollmentData = {
       firstName,
       lastName,
-      email,
+      preferredContactMethod: contactMethod,
       qualifications: qualificationsArray,
       paymentMethod
-    });
+    };
+
+    // Add email or phone based on contact method
+    if (email) {
+      enrollmentData.email = email;
+    }
+    if (phone) {
+      enrollmentData.phone = phone;
+    }
+
+    const enrollment = new Enrollment(enrollmentData);
 
     const savedEnrollment = await enrollment.save();
 
@@ -107,7 +140,9 @@ app.post('/api/enroll', async (req, res) => {
         id: savedEnrollment._id,
         firstName: savedEnrollment.firstName,
         lastName: savedEnrollment.lastName,
+        preferredContactMethod: savedEnrollment.preferredContactMethod,
         email: savedEnrollment.email,
+        phone: savedEnrollment.phone,
         qualifications: savedEnrollment.qualifications,
         paymentMethod: savedEnrollment.paymentMethod,
         submittedAt: savedEnrollment.submittedAt

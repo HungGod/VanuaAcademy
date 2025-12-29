@@ -35,10 +35,10 @@ const Header = () => {
               About Us
             </button>
             <button 
-              onClick={() => scrollToSection('qualifications')}
+              onClick={() => scrollToSection('certificates')}
               className="text-black hover:text-[#72955f] transition-colors font-medium"
             >
-              Qualifications
+              Certificates
             </button>
             <button 
               onClick={() => scrollToSection('enroll')}
@@ -120,10 +120,10 @@ const Header = () => {
               About Us
             </button>
             <button 
-              onClick={() => scrollToSection('qualifications')}
+              onClick={() => scrollToSection('certificates')}
               className="block w-full text-left text-black hover:text-[#72955f] transition-colors py-2 font-medium"
             >
-              Qualifications
+              Certificates
             </button>
             <button 
               onClick={() => scrollToSection('enroll')}

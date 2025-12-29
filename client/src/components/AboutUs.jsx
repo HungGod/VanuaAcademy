@@ -22,13 +22,10 @@ const AboutUs = () => {
           <div className="absolute top-1/2 right-8 transform -translate-y-1/2 z-10 max-w-lg">
             <div className="bg-white p-8 rounded-lg shadow-2xl border-2 border-[#72955f]">
               <p className="text-black leading-relaxed mb-4">
-                Our Academy excels in every aspect of the spa industry, including training, spa operations, product manufacturing, and tourism consultancy. We are CIDESCO Internationally accredited, offering successful graduates opportunity to work abroad. Since our inception, we have maintained a 100% employment rate for our graduates.
+              Vanua Academy, located in Savusavu, Fiji’s “hidden paradise”, offers an exciting pathway into the growing wellness and tourism industry. Students gain hands-on spa training, business skills, and internationally recognised CIDESCO certification, the global gold standard in aesthetics and beauty therapy since 1957, leading to resort careers or successful self-employment.
               </p>
               <p className="text-black leading-relaxed mb-4">
-                As the backbone of Fiji's Spa Tourism Industry, Vanua Academy has been instrumental in providing essential expertise to resorts and hotels. With over 365 hotels and resorts in Fiji offering massage or spa services, our graduates are in high demand. Many of the most luxurious resorts and spas in Fiji are staffed entirely by our highly skilled alumni.
-              </p>
-              <p className="text-black leading-relaxed">
-                Located in the beautiful and growing Savusavu, we proudly partner with Fiji's premium hotels and resorts, supporting with staffing solutions, Nama Fiji Thalassotherapy protocols & products. Vanua Academy has an international presence in the global Spa and Wellness sector.
+              The programme is designed to meet real industry demand in Fiji’s Northern Division while opening education and income opportunities for rural communities. Enrol at Vanua Academy to gain professional qualifications, and build a future in a world-class wellness industry.
               </p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-const PartneredWith = () => {
+const AccreditedBy = () => {
   const partners = [
     { name: 'CIDESCO', image: '/images/cidesco-cert.png' },
     { name: 'Fiji Government', image: '/images/fiji-government.jpg' },
@@ -12,10 +12,10 @@ const PartneredWith = () => {
     <section className="py-12 bg-gray-100">
       <div className="container mx-auto px-4">
 
-        <div className="h-64 md:h-64">
+        <div className="h-32 md:h-32">
 
         </div>
-        <h2 className="text-4xl font-bold text-center mb-12 text-black">Certified and Accepted By</h2>
+        <h2 className="text-4xl font-bold text-center mb-12 text-black">Accredited By</h2>
 
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-items-center">
@@ -39,5 +39,5 @@ const PartneredWith = () => {
   );
 };
 
-export default PartneredWith;
+export default AccreditedBy;
 

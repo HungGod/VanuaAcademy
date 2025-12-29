@@ -11,12 +11,21 @@ const enrollmentSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  email: {
+  preferredContactMethod: {
     type: String,
     required: true,
     trim: true,
+    enum: ['Email', 'Viber', 'WhatsApp', 'SMS/Text']
+  },
+  email: {
+    type: String,
+    trim: true,
     lowercase: true,
     match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email']
+  },
+  phone: {
+    type: String,
+    trim: true
   },
   qualifications: {
     type: [String],
@@ -36,4 +45,7 @@ const enrollmentSchema = new mongoose.Schema({
 });
 
 export default mongoose.model('Enrollment', enrollmentSchema);
+
+
+
 

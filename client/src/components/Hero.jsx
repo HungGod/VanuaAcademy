@@ -22,7 +22,7 @@ const Hero = () => {
           </div>
           <blockquote className="relative z-10 pl-8 md:pl-10">
             <p className="text-base md:text-lg italic text-black text-center mb-3">
-              Bringing beauty and spa education to our community here in Savusavu, Fiji
+            Vanua Academy is your pathway to building a successful future in the tourism sector  
             </p>
             <footer className="text-sm md:text-base text-black text-center font-semibold">
               — Catharine Wadsworth, Founder
