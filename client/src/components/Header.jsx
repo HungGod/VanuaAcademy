@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import nav from '../data/nav';
 import contactInfo from '../data/contactInfo';
-import logo, { Logo } from '../data/logo';
+import { Logo } from '../data/icons';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,12 +15,12 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Title */}
           <div className="flex items-center space-x-3">
-            <a href="/" className="text-black hover:text-[#72955f] transition-colors">
+            <a href="/" className="text-black dark:text-white transition-colors hover:text-primary" onMouseEnter={(e) => e.currentTarget.style.color = ''} onMouseLeave={(e) => e.currentTarget.style.color = ''}>
               <Logo className="h-12 w-12" />
             </a>
           </div>
@@ -31,7 +31,7 @@ const Header = () => {
               <button 
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className="text-black hover:text-[#72955f] transition-colors font-medium"
+                className="text-black dark:text-white transition-colors font-medium hover:text-primary"
               >
                 {link.name}
               </button>
@@ -40,21 +40,24 @@ const Header = () => {
 
           {/* Social Media Links */}
           <div className="hidden md:flex items-center space-x-4">
-            {contactInfo.socialMedia.map((social) => (
-              <a 
-                key={social.name}
-                href={social.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-black hover:text-[#72955f] transition-colors"
-                aria-label={social.name}
-              >
-                {social.icon}
-              </a>
-            ))}
+            {contactInfo.socialMedia.map((social) => {
+              const IconComponent = social.icon;
+              return (
+                <a 
+                  key={social.name}
+                  href={social.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-black dark:text-white transition-colors hover:text-primary"
+                  aria-label={social.name}
+                >
+                  <IconComponent className="h-6 w-6" />
+                </a>
+              );
+            })}
             <a 
               href={`mailto:${contactInfo.email}`} 
-              className="px-4 py-2 text-black border-2 border-[#000000] rounded-lg font-medium transition-colors hover:text-[#72955f] hover:border-[#72955f]"
+              className="px-4 py-2 text-black dark:text-white border-2 border-black dark:border-white rounded-lg font-medium transition-colors hover:text-primary hover:border-primary"
             >
               Contact Us
             </a>
@@ -62,7 +65,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden text-black"
+            className="md:hidden text-black dark:text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -83,27 +86,30 @@ const Header = () => {
               <button 
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className="block w-full text-left text-black hover:text-[#72955f] transition-colors py-2 font-medium"
+                className="block w-full text-left text-black dark:text-white transition-colors py-2 font-medium hover:text-primary"
               >
                 {link.name}
               </button>
             ))}
             <div className="flex items-center space-x-4 pt-2">
-              {contactInfo.socialMedia.map((social) => (
-                <a 
-                  key={social.name}
-                  href={social.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-black hover:text-[#72955f] transition-colors"
-                  aria-label={social.name}
-                >
-                  {social.icon}
-                </a>
-              ))}
+              {contactInfo.socialMedia.map((social) => {
+                const IconComponent = social.icon;
+                return (
+                  <a 
+                    key={social.name}
+                    href={social.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-black dark:text-white transition-colors hover:text-primary"
+                    aria-label={social.name}
+                  >
+                    <IconComponent className="h-6 w-6" />
+                  </a>
+                );
+              })}
               <a 
                 href={`mailto:${contactInfo.email}`} 
-                className="px-4 py-2 text-black border-2 border-[#000000] rounded-lg font-medium transition-colors hover:text-[#72955f] hover:border-[#72955f]"
+                className="px-4 py-2 text-black dark:text-white border-2 border-black dark:border-white rounded-lg font-medium transition-colors hover:text-primary hover:border-primary"
               >
                 Contact Us
               </a>

@@ -10,7 +10,7 @@ const EnrollForm = () => {
     contactMethod: 'Email',
     contactInfo: '',
     certificates: [],
-    paymentMethod: ''
+    paymentMethod: paymentMethods[0] || ''
   });
   const [selectedCertificate, setSelectedCertificate] = useState('');
   const [errors, setErrors] = useState({});
@@ -168,7 +168,7 @@ const EnrollForm = () => {
           contactMethod: 'Email',
           contactInfo: '',
           certificates: [],
-          paymentMethod: ''
+          paymentMethod: paymentMethods[0] || ''
         });
         setSelectedCertificate('');
       } else {
@@ -182,16 +182,21 @@ const EnrollForm = () => {
   };
 
   return (
-    <section id="enroll" className="py-16 bg-white">
+    <section id="enroll" className="py-16 bg-white dark:bg-gray-900">
+      <style>{`
+        .focus-ring-primary:focus {
+          --tw-ring-color: #72955f !important;
+        }
+      `}</style>
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="h-32 md:h-32">
         </div>
-        <h2 className="text-4xl font-bold text-center mb-12 text-black">Enroll Now</h2>
+        <h2 className="text-4xl font-bold text-center mb-12 text-black dark:text-white">Enroll Now</h2>
         
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg border-2 border-[#72955f]">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border-2 border-primary">
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-black mb-2">
+              <label htmlFor="firstName" className="block text-sm font-medium text-black dark:text-white mb-2">
                 First Name
               </label>
               <input
@@ -200,20 +205,20 @@ const EnrollForm = () => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 bg-[field] text-[fieldtext] placeholder:text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 ${
+                className={`w-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.firstName 
                     ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-[#72955f]'
+                    : 'border-gray-300 dark:border-gray-600 focus-ring-primary'
                 }`}
                 placeholder="Enter your first name"
               />
               {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.firstName}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-black mb-2">
+              <label htmlFor="lastName" className="block text-sm font-medium text-black dark:text-white mb-2">
                 Last Name
               </label>
               <input
@@ -222,21 +227,21 @@ const EnrollForm = () => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 bg-[field] text-[fieldtext] placeholder:text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 ${
+                className={`w-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.lastName 
                     ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-[#72955f]'
+                    : 'border-gray-300 dark:border-gray-600 focus-ring-primary'
                 }`}
                 placeholder="Enter your last name"
               />
               {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lastName}</p>
               )}
             </div>
           </div>
 
           <div className="mb-6">
-            <label htmlFor="contactMethod" className="block text-sm font-medium text-black mb-2">
+            <label htmlFor="contactMethod" className="block text-sm font-medium text-black dark:text-white mb-2">
               Preferred Contact
             </label>
             <div className="flex gap-2 relative items-stretch">
@@ -244,40 +249,42 @@ const EnrollForm = () => {
                 <button
                   type="button"
                   onClick={() => setIsContactDropdownOpen(!isContactDropdownOpen)}
-                  className={`w-full h-full px-4 py-2 bg-[field] text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 flex items-center justify-center ${
+                  className={`w-full h-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white border rounded-lg focus:outline-none focus:ring-2 flex items-center justify-center ${
                     errors.contactMethod 
                       ? 'border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:ring-[#72955f]'
+                      : 'border-gray-300 dark:border-gray-600 focus-ring-primary'
                   }`}
                   aria-label={`Selected contact method: ${formData.contactMethod}`}
                 >
-                  {currentContactMethod && (
-                    <span className="text-[fieldtext]">
-                      {currentContactMethod.icon}
-                    </span>
-                  )}
+                  {currentContactMethod && (() => {
+                    const IconComponent = currentContactMethod.icon;
+                    return <IconComponent className="h-5 w-5" />;
+                  })()}
                 </button>
                 {isContactDropdownOpen && (
-                  <div className="absolute z-10 left-0 mt-1 bg-[field] border border-gray-300 rounded-lg shadow-lg min-w-[140px]">
-                    {contactMethods.map((method) => (
-                      <button
-                        key={method.value}
-                        type="button"
-                        onClick={() => {
-                          setFormData(prev => ({ ...prev, contactMethod: method.value }));
-                          setIsContactDropdownOpen(false);
-                          if (errors.contactMethod) {
-                            setErrors(prev => ({ ...prev, contactMethod: '' }));
-                          }
-                        }}
-                        className="w-full px-4 py-2 text-[fieldtext] hover:bg-[ButtonFace] flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg transition-colors whitespace-nowrap text-left"
-                      >
-                        <span className="text-[fieldtext] flex-shrink-0">
-                          {method.icon}
-                        </span>
-                        <span className="text-[fieldtext]">{method.label}</span>
-                      </button>
-                    ))}
+                  <div className="absolute z-10 left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg min-w-[140px]">
+                    {contactMethods.map((method) => {
+                      const IconComponent = method.icon;
+                      return (
+                        <button
+                          key={method.value}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, contactMethod: method.value }));
+                            setIsContactDropdownOpen(false);
+                            if (errors.contactMethod) {
+                              setErrors(prev => ({ ...prev, contactMethod: '' }));
+                            }
+                          }}
+                          className="w-full px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg transition-colors whitespace-nowrap text-left"
+                        >
+                          <span className="text-black dark:text-white flex-shrink-0">
+                            <IconComponent className="h-5 w-5" />
+                          </span>
+                          <span className="text-black dark:text-white">{method.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -287,10 +294,10 @@ const EnrollForm = () => {
                 name="contactInfo"
                 value={formData.contactInfo}
                 onChange={handleChange}
-                className={`flex-1 min-w-0 px-4 py-2 bg-[field] text-[fieldtext] placeholder:text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 ${
+                className={`flex-1 min-w-0 px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.contactInfo 
                     ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-[#72955f]'
+                    : 'border-gray-300 dark:border-gray-600 focus-ring-primary'
                 }`}
                 placeholder={
                   formData.contactMethod === 'Email' 
@@ -303,16 +310,16 @@ const EnrollForm = () => {
               />
             </div>
             {errors.contactMethod && (
-              <p className="mt-1 text-sm text-red-600">{errors.contactMethod}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.contactMethod}</p>
             )}
             {errors.contactInfo && (
-              <p className="mt-1 text-sm text-red-600">{errors.contactInfo}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.contactInfo}</p>
             )}
           </div>
 
           <div className="mb-6">
-            <label htmlFor="certificateSelect" className="block text-sm font-medium text-black mb-2">
-              Certificates of Enrollment <span className="text-gray-600 font-normal">(up to {certificates.length})</span>
+            <label htmlFor="certificateSelect" className="block text-sm font-medium text-black dark:text-white mb-2">
+              Certificates of Enrollment <span className="text-gray-600 dark:text-gray-400 font-normal">(up to {certificates.length})</span>
             </label>
             <div className="mb-3">
               <select
@@ -324,7 +331,7 @@ const EnrollForm = () => {
                     handleAddCertificate(value);
                   }
                 }}
-                className="w-full px-4 py-2 bg-[field] text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 border-gray-300 focus:ring-[#72955f]"
+                className="w-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white border rounded-lg focus:outline-none focus:ring-2 border-gray-300 dark:border-gray-600 focus-ring-primary"
               >
                 <option value="">Select a certificate to add</option>
                 {certificates
@@ -338,18 +345,18 @@ const EnrollForm = () => {
             {/* List of added certificates */}
             {formData.certificates.length > 0 && (
               <div className="mt-3 space-y-2">
-                <p className="text-sm font-medium text-black mb-2">Selected Certificates:</p>
+                <p className="text-sm font-medium text-black dark:text-white mb-2">Selected Certificates:</p>
                 <ul className="space-y-2">
                   {formData.certificates.map((cert, index) => (
                     <li 
                       key={index}
-                      className="flex items-center justify-between bg-white px-4 py-2 rounded-lg border-2 border-[#72955f]"
+                      className="flex items-center justify-between bg-white dark:bg-gray-700 px-4 py-2 rounded-lg border-2 border-primary"
                     >
-                      <span className="text-black">{cert}</span>
+                      <span className="text-black dark:text-white">{cert}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveCertificate(cert)}
-                        className="text-red-600 hover:text-red-800 transition-colors ml-4"
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors ml-4"
                         aria-label={`Remove ${cert}`}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -362,12 +369,12 @@ const EnrollForm = () => {
               </div>
             )}
             {errors.certificates && (
-              <p className="mt-1 text-sm text-red-600">{errors.certificates}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.certificates}</p>
             )}
           </div>
 
           <div className="mb-6">
-            <label htmlFor="paymentMethod" className="block text-sm font-medium text-black mb-2">
+            <label htmlFor="paymentMethod" className="block text-sm font-medium text-black dark:text-white mb-2">
               Preferred Method of Payment
             </label>
             <select
@@ -375,27 +382,19 @@ const EnrollForm = () => {
               name="paymentMethod"
               value={formData.paymentMethod}
               onChange={handleChange}
-              className={`w-full px-4 py-2 bg-[field] text-[fieldtext] border rounded-lg focus:outline-none focus:ring-2 ${
-                errors.paymentMethod 
-                  ? 'border-red-500 focus:ring-red-500' 
-                  : 'border-gray-300 focus:ring-[#72955f]'
-              }`}
+              className="w-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white border rounded-lg focus:outline-none focus:ring-2 border-gray-300 dark:border-gray-600 focus-ring-primary"
             >
-              <option value="">Select payment method</option>
               {paymentMethods.map((method, index) => (
                 <option key={index} value={method}>{method}</option>
               ))}
             </select>
-            {errors.paymentMethod && (
-              <p className="mt-1 text-sm text-red-600">{errors.paymentMethod}</p>
-            )}
           </div>
 
           {submitStatus && (
             <div className={`mb-6 p-4 rounded-lg ${
               submitStatus.type === 'success' 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
+                ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
+                : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
             }`}>
               {submitStatus.message}
             </div>
@@ -404,10 +403,7 @@ const EnrollForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#72955f' }}
-            onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = '#5a7a4a')}
-            onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = '#72955f')}
+            className="w-full text-white py-3 px-6 rounded-lg font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed bg-primary hover:bg-secondary"
           >
             {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>

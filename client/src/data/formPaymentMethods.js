@@ -1,6 +1,6 @@
 const paymentMethods = [
-    'FNPF',
     'Direct (Cash/Card)',
+    'FNPF',
     'Other'
   ];
 
