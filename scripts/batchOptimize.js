@@ -7,7 +7,7 @@ import { optimize } from './optimizeImages.js';
  */
 const imagesToOptimize = [
   [
-    'client/src/assets/images/fiji-high-quality-spread.jpg',
+    'assets/images/fiji-high-quality-spread.jpg',
     90,
     [1200, 800, 400],
     true,
@@ -15,7 +15,7 @@ const imagesToOptimize = [
     'hero-bg'
   ],
   [
-    'client/src/assets/images/high-quality-fiji-woman-spread.jpg',
+    'assets/images/high-quality-fiji-woman-spread.jpg',
     80,
     [1200, 800, 400],
     true,
@@ -23,7 +23,7 @@ const imagesToOptimize = [
     'about-bg'
   ],
   [
-    'client/src/assets/images/cert-beauty-spa-therapy.png',
+    'assets/images/cert-beauty-spa-therapy.png',
     60,
     [128],
     false,
@@ -31,7 +31,7 @@ const imagesToOptimize = [
     'cert-beauty_spa_therapy'
   ],
   [
-    'client/src/assets/images/cert-nail-technology.png',
+    'assets/images/cert-nail-technology.png',
     60,
     [128],
     false,
@@ -39,7 +39,7 @@ const imagesToOptimize = [
     'cert-nail_technology'
   ],
   [
-    'client/src/assets/images/cert-massage-therapy.png',
+    'assets/images/cert-massage-therapy.png',
     60,
     [128],
     false,

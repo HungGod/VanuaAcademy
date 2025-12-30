@@ -8,6 +8,8 @@
     "optimize:images": "node scripts/batchOptimize.js",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
+    "server:testfirestore": "cd server && node scripts/testFirestore.js",
+    "server:testapi": "cd server && node scripts/testAPI.js",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "devDependencies": {
@@ -16,3 +18,4 @@
     "svgo": "^4.0.0"
   }
 }
+

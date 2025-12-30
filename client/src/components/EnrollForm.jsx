@@ -1,16 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import certificatesData from '../data/certificates';
 import { contactMethods, emailMethods, phoneMethods } from '../data/formPreferredContact';
-import paymentMethods from '../data/formPaymentMethods';
 
 const EnrollForm = () => {
   const [formData, setFormData] = useState({
+    website: '', // Honeypot field - should always be empty
     firstName: '',
     lastName: '',
     contactMethod: 'Email',
     contactInfo: '',
-    certificates: [],
-    paymentMethod: paymentMethods[0] || ''
+    certificates: []
   });
   const [selectedCertificate, setSelectedCertificate] = useState('');
   const [errors, setErrors] = useState({});
@@ -130,10 +129,6 @@ const EnrollForm = () => {
     }
     
     // Certificates are optional, no validation needed
-    
-    if (!formData.paymentMethod) {
-      newErrors.paymentMethod = 'Please select a payment method';
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -141,6 +136,11 @@ const EnrollForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) {
+      return;
+    }
     
     if (!validate()) {
       return;
@@ -163,15 +163,23 @@ const EnrollForm = () => {
       if (response.ok) {
         setSubmitStatus({ type: 'success', message: 'Enrollment submitted successfully!' });
         setFormData({
+          website: '',
           firstName: '',
           lastName: '',
           contactMethod: 'Email',
           contactInfo: '',
-          certificates: [],
-          paymentMethod: paymentMethods[0] || ''
+          certificates: []
         });
         setSelectedCertificate('');
-      } else {
+      } 
+      else if (response.status === 429) {
+        const retryAfter = data.retryAfter || 60;
+        setSubmitStatus({ 
+          type: 'error', 
+          message: `Please wait ${retryAfter} seconds before submitting again.` 
+        });
+      }
+      else {
         setSubmitStatus({ type: 'error', message: data.error || 'Failed to submit enrollment' });
       }
     } catch (error) {
@@ -193,7 +201,18 @@ const EnrollForm = () => {
         </div>
         <h2 className="text-4xl font-bold text-center mb-12 text-black dark:text-white">Enroll Now</h2>
         
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border-2 border-primary">
+        <form onSubmit={handleSubmit} className={`bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border-2 border-primary ${isSubmitting ? 'opacity-50 pointer-events-none' : ''}`}>
+          {/* Honeypot field - hidden from users but visible to bots */}
+          <input
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            tabIndex="-1"
+            autoComplete="off"
+            style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
+            aria-hidden="true"
+          />
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div>
               <label htmlFor="firstName" className="block text-sm font-medium text-black dark:text-white mb-2">
@@ -373,29 +392,16 @@ const EnrollForm = () => {
             )}
           </div>
 
-          <div className="mb-6">
-            <label htmlFor="paymentMethod" className="block text-sm font-medium text-black dark:text-white mb-2">
-              Preferred Method of Payment
-            </label>
-            <select
-              id="paymentMethod"
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-white dark:bg-gray-800 text-black dark:text-white border rounded-lg focus:outline-none focus:ring-2 border-gray-300 dark:border-gray-600 focus-ring-primary"
-            >
-              {paymentMethods.map((method, index) => (
-                <option key={index} value={method}>{method}</option>
-              ))}
-            </select>
-          </div>
-
           {submitStatus && (
-            <div className={`mb-6 p-4 rounded-lg ${
-              submitStatus.type === 'success' 
-                ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
-                : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
-            }`}>
+            <div 
+              role="alert"
+              aria-live="polite"
+              className={`mb-6 p-4 rounded-lg ${
+                submitStatus.type === 'success' 
+                  ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
+                  : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+              }`}
+            >
               {submitStatus.message}
             </div>
           )}
