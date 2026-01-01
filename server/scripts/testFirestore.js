@@ -17,7 +17,6 @@ try {
   console.log('✓ Firebase initialized');
 
   const db = admin.firestore();
-  db.settings({ databaseId: 'students_db' });
 
   // Test 1: Write a test document
   async function testWrite() {

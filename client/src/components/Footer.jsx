@@ -1,6 +1,23 @@
 import contactInfo from '../data/contactInfo';
 import { FullLogo } from '../data/icons';
 
+const formatPhoneNumber = (phone) => {
+  // Remove any non-digit characters
+  const digits = phone.replace(/\D/g, '');
+  
+  // Format as +(000)000-0000
+  // For 10-digit numbers: +(XXX)XXX-XXXX
+  if (digits.length >= 10) {
+    const areaCode = digits.slice(0, 3);
+    const firstPart = digits.slice(3, 6);
+    const lastPart = digits.slice(6, 10);
+    return `(${areaCode}) ${firstPart}-${lastPart}`;
+  }
+  
+  // Fallback for other lengths
+  return phone;
+};
+
 const Footer = () => {
   return (
     <footer className="text-white py-12 bg-primary">
@@ -25,10 +42,20 @@ const Footer = () => {
             </p>
             <p className="text-white opacity-90 mb-2">
               <a href={`tel:${contactInfo.phone}`} className="hover:text-white transition-colors">
-                {contactInfo.phone}
+                {formatPhoneNumber(contactInfo.phone)}
               </a>
             </p>
-            <p className="text-white opacity-90 mb-4">{contactInfo.address}</p>
+            <p className="text-white opacity-90 mb-4">
+              {Array.isArray(contactInfo.address) ? (
+                <>
+                  {contactInfo.address[0]}
+                  <br />
+                  {contactInfo.address[1]}
+                </>
+              ) : (
+                contactInfo.address
+              )}
+            </p>
             
             {/* Social Media Icons */}
             <div className="flex items-center justify-center md:justify-start gap-4">

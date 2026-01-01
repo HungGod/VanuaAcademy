@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "vanuaacademy",
+  "private_key_id": "51b5b3d32f0b3351be169a0162cee087f2b7c547",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDFla7q9sp4Hwi5\nd1qei1uHWRwJc2I3TJDeqJ/zznuEL28wfz7tprhbvKFtd0cAEwx1OiUnlXBDqAsG\nymRejPvKgv6z8sF5QECHhMi525ivAdRGBf/PWPCMXYgUeYCZCPimVCidDFd5aPGt\nGVkm5X6aW/s/UELVLioY1MYdhCDmjgGrr9DZ8KbNDnxz1nSn5R5a2zeBq+3+twsQ\nNmZzE8vzZrXwBpja5mpi3OfUD9WQMgikYMsAXco60A+Iino8f5kguu59Y+i35eBr\n4lSQxmlrVszinM9ceTtX4XlLvUT7ApU43WcdwMoHX4kAPDq03EOl1oA2/6TFs2CQ\nue0zc/VhAgMBAAECggEARXNDtJtit65Q5sApPilF1uFflYLVNxLWqS0kbBJcIC58\nKtPPTsGXc8duBogykLghXOM/RBanC2D53z0s4n8z0g8RcDcYAoKvK/Nkis/Bb2J5\nNtPNAxkEFJKbznaW2TPqEqzqSamY5bgZmvqZ964bPi6utaaEl2JOscO4j49t8RvC\nqpYXjD56WW1vc6HuPa840AGa7rSK88SoqaO66q+2Bt7pch7Q34WwgcPCAs96i+8q\nJfcFuAof3I9PHQzzxGNgh+hwFI1Q3lcP/N9tUcLLE5xJloC4WHAeAiPKJgFgQxRS\nZkyTbjezj80pKDuwzwqNcfn/RtbZ7C3965U7KI1ZsQKBgQDzPLhtrPOzv750PdDv\nOB7UhBssIULZEcVgPkXRyg17mgp96YDvBG/fZ7b1000Tblzx2pg6dlUv8l6CZZIt\nPjX6Ll5VcfxJSdousAnIX6GJqDFbA+sI2VCMUDwLBBYgMUGfmREwfqaBkVvlDmCF\nca09Lqw90KQc5kHWqsiVRGI2ywKBgQDP87yNsMQnupbsaqM3eMg3cbpdyZcSQUYq\ngW660VunclT4OaOip6vAdotjPRDYf4S9pioNPOktFCHw7X5FPmWo9Ncbra8haWxl\ndF+RpXleSnc5NPNPi6TmeyhLdDMCa+ijiVD5BjJmmubHwflNNsnkJH2BHM9dV8bG\nSowj0OzTAwKBgDe6NqryEBejm5f4PbFBE1cvOSaALFedSbJGMirhdvtVjIfSgrbA\nNn1hvrpNggAsreC/a1chm1zT07FeYgI5mZZLH1PGPL3xzKobrPIabuEiBsTKfgPV\n/i1XiJohgow3nMhbAmQw8CcJTZuKErUgGUfGNLIo5iC05GqxUClatIHHAoGBAKI3\nPMe+s1VWfXLQwJ9+DZkKk1mj7r/jwUtZCjqbJAcb7eJwfBBfAWCyWItCUIjB+JdE\nLpuC/1YV1WAuswhq4zyIOeCyfOHwbgk6XW6tCV8fcZ9jicVsZmcQfV9Wto/WA3TG\noi6PwfM+NHZw/vtXmOfp+ykjgzMKTNnTvzwVNxhnAoGBANjkXI8AnMIpwFVsxBAq\nZ3aYbzV0KF/Bb6BzKU4v7hq36MDD/sYz0ESjaiW40i0Tky47auyfYRvTosQEyd9Q\nO/EIwesyDkPtDTkvoP6fUP9z0Fzv/32bxlgP2lEy+SOOP/OixmZWWNxSPNyLN5WS\nMrAxwSwKqOQE2APzEbewZxwk\n-----END PRIVATE KEY-----\n",
+  "client_email": "vanua-academy-backend@vanuaacademy.iam.gserviceaccount.com",
+  "client_id": "105308145952136091792",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/vanua-academy-backend%40vanuaacademy.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

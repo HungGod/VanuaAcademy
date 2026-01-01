@@ -2,8 +2,8 @@ import { InstagramIcon, LinkedInIcon, FacebookIcon } from './icons';
 
 const contactInfo = {
     email: 'info@vanuaacademy.com',
-    phone: '+6790000000',
-    address: '14 Rava rd, Savusavu, Fiji',
+    phone: '6799030228',
+    address: ['Rava Community Hall, Rava Estate', 'Savusavu, Fiji'],
     businessName: 'Vanua Academy Ltd',
     socialMedia: [
         {

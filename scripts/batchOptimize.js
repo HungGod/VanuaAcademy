@@ -45,6 +45,14 @@ const imagesToOptimize = [
     false,
     'client/public/images/',
     'cert-massage_therapy'
+  ],
+  [
+    'assets/images/cert-makeup-artistry.png',
+    60,
+    [128],
+    false,
+    'client/public/images/',
+    'cert-makeup_artistry'
   ]
 ];
 
