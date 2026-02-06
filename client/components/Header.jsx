@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import nav from '../data/nav';
 import contactInfo from '../data/contactInfo';

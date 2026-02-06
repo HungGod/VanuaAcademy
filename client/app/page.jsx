@@ -5,7 +5,7 @@ import Certificates from '../components/Certificates';
 import EnrollForm from '../components/EnrollForm';
 import Footer from '../components/Footer';
 
-const HomePage = () => {
+export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
@@ -18,7 +18,6 @@ const HomePage = () => {
       <Footer />
     </div>
   );
-};
+}
 
-export default HomePage;
 

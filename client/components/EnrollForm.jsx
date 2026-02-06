@@ -1,6 +1,10 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import certificatesData from '../data/certificates';
 import { contactMethods, emailMethods, phoneMethods } from '../data/formPreferredContact';
+import { app } from '../lib/firebase';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const EnrollForm = () => {
   const [formData, setFormData] = useState({
@@ -142,6 +146,12 @@ const EnrollForm = () => {
       return;
     }
     
+    // Honeypot check - reject if honeypot field is filled
+    if (formData.website && formData.website.trim() !== '') {
+      setSubmitStatus({ type: 'error', message: 'Invalid submission' });
+      return;
+    }
+    
     if (!validate()) {
       return;
     }
@@ -150,40 +160,49 @@ const EnrollForm = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/enroll', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      // Get Firestore instance
+      const db = getFirestore(app);
+      
+      // Transform form data to match server structure
+      const enrollmentData = {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        preferredContactMethod: formData.contactMethod,
+        qualifications: Array.isArray(formData.certificates) ? formData.certificates : [],
+        submittedAt: serverTimestamp()
+      };
+
+      // Map contactInfo to email or phone based on contactMethod
+      if (formData.contactMethod === 'Email') {
+        enrollmentData.email = formData.contactInfo.toLowerCase().trim();
+      } else if (['Viber', 'WhatsApp', 'SMS/Text'].includes(formData.contactMethod)) {
+        enrollmentData.phone = formData.contactInfo.trim();
+      }
+
+      // Write directly to Firestore
+      await addDoc(collection(db, 'enrollments'), enrollmentData);
+
+      setSubmitStatus({ type: 'success', message: 'Enrollment submitted successfully!' });
+      setFormData({
+        website: '',
+        firstName: '',
+        lastName: '',
+        contactMethod: 'Email',
+        contactInfo: '',
+        certificates: []
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSubmitStatus({ type: 'success', message: 'Enrollment submitted successfully!' });
-        setFormData({
-          website: '',
-          firstName: '',
-          lastName: '',
-          contactMethod: 'Email',
-          contactInfo: '',
-          certificates: []
-        });
-        setSelectedCertificate('');
-      } 
-      else if (response.status === 429) {
-        const retryAfter = data.retryAfter || 60;
-        setSubmitStatus({ 
-          type: 'error', 
-          message: `Please wait ${retryAfter} seconds before submitting again.` 
-        });
-      }
-      else {
-        setSubmitStatus({ type: 'error', message: data.error || 'Failed to submit enrollment' });
-      }
+      setSelectedCertificate('');
     } catch (error) {
-      setSubmitStatus({ type: 'error', message: 'Network error. Please try again later.' });
+      console.error('Firestore error:', error);
+      
+      // Handle specific Firestore errors
+      if (error.code === 'permission-denied') {
+        setSubmitStatus({ type: 'error', message: 'Permission denied. Please check your Firestore rules.' });
+      } else if (error.code === 'unavailable') {
+        setSubmitStatus({ type: 'error', message: 'Service unavailable. Please try again later.' });
+      } else {
+        setSubmitStatus({ type: 'error', message: error.message || 'Failed to submit enrollment. Please try again.' });
+      }
     } finally {
       setIsSubmitting(false);
     }
